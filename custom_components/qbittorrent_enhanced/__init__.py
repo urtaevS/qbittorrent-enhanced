@@ -6,8 +6,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, HomeAssistantError, ServiceCall, SupportsResponse
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.event import async_track_event
 
 from .api import QBittorrentApi
 from .exceptions import QBittorrentDuplicateError
@@ -238,49 +236,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
-    # Keep the Config Entry title synchronized with the HA device name.
-    # The device is the user-facing identity (for example "NAS" or "Skynet"),
-    # so multiple qBittorrent connections are distinguishable in HA.
-    device_registry = dr.async_get(hass)
-    device_identifier = (DOMAIN, entry.entry_id)
-
-    def _sync_entry_title() -> None:
-        device = device_registry.async_get_device(
-            identifiers={device_identifier}
-        )
-        if device is None:
-            return
-        name = device.name_by_user or device.name
-        if name and name != entry.title:
-            hass.config_entries.async_update_entry(entry, title=name)
-
-    _sync_entry_title()
-
-    def _device_registry_updated(event) -> None:
-        data = event.data
-        if data.get("action") != "update":
-            return
-        if data.get("device_id") is None:
-            return
-
-        device = device_registry.async_get_device(
-            identifiers={device_identifier}
-        )
-        if device is None or data.get("device_id") != device.id:
-            return
-
-        changes = data.get("changes") or {}
-        if "name" in changes or "name_by_user" in changes:
-            _sync_entry_title()
-
-    entry.async_on_unload(
-        async_track_event(
-            hass,
-            dr.EVENT_DEVICE_REGISTRY_UPDATED,
-            _device_registry_updated,
-        )
-    )
     return True
 
 

@@ -5,6 +5,7 @@
         "title": "qBittorrent",
         "description": "Connect to qBittorrent WebUI/WebAPI.",
         "data": {
+          "name": "Connection name",
           "host": "URL",
           "auth_method": "Authentication",
           "verify_ssl": "Verify TLS certificate",
@@ -42,6 +43,7 @@
         "title": "qBittorrent settings",
         "description": "Change the connection name and optional speed settings.",
         "data": {
+          "name": "Connection name",
           "connection_speed_mbps": "Connection speed (Mbps)",
           "update_interval": "Update interval (seconds)"
         }

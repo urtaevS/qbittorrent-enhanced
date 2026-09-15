@@ -1,7 +1,7 @@
 {
   "domain": "qbittorrent_enhanced",
   "name": "qBittorrent Enhanced",
-  "version": "0.5.19",
+  "version": "0.5.16",
   "documentation": "https://github.com/YOUR_GITHUB_USERNAME/qbittorrent-enhanced",
   "issue_tracker": "https://github.com/YOUR_GITHUB_USERNAME/qbittorrent-enhanced/issues",
   "requirements": [],

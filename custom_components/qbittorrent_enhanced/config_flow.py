@@ -16,6 +16,7 @@ from .const import (
     CONF_API_KEY,
     CONF_AUTH_METHOD,
     CONF_CONNECTION_SPEED_MBPS,
+    CONF_NAME,
     CONF_UPDATE_INTERVAL,
     CONF_VERIFY_SSL,
     DEFAULT_UPDATE_INTERVAL,
@@ -46,6 +47,9 @@ class QBittorrentConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
+                    vol.Required(CONF_NAME, default="qBittorrent"): vol.All(
+                        str, vol.Length(min=1, max=100)
+                    ),
                     vol.Required(CONF_HOST): str,
                     vol.Required(
                         CONF_AUTH_METHOD, default=AUTH_API_KEY
@@ -170,14 +174,14 @@ class QBittorrentConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(host)
         self._abort_if_unique_id_configured()
 
-        title = f"qBittorrent {info.version}"
+        name = self._data.pop(CONF_NAME, "qBittorrent").strip() or "qBittorrent"
         connection_speed = self._data.pop(CONF_CONNECTION_SPEED_MBPS, None)
         options = {
             CONF_UPDATE_INTERVAL: self._data.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL),
         }
         if connection_speed is not None:
             options[CONF_CONNECTION_SPEED_MBPS] = connection_speed
-        return self.async_create_entry(title=title, data=self._data, options=options)
+        return self.async_create_entry(title=name, data=self._data, options=options)
 
     @staticmethod
     @callback
@@ -190,6 +194,11 @@ class QBittorrentOptionsFlowHandler(config_entries.OptionsFlowWithReload):
 
     async def async_step_init(self, user_input=None):
         if user_input is not None:
+            name = str(user_input.pop(CONF_NAME, self.config_entry.title)).strip()
+            name = name or self.config_entry.title
+            self.hass.config_entries.async_update_entry(
+                self.config_entry, title=name
+            )
             return self.async_create_entry(title="", data=user_input)
 
         return self.async_show_form(
@@ -197,6 +206,12 @@ class QBittorrentOptionsFlowHandler(config_entries.OptionsFlowWithReload):
             data_schema=self.add_suggested_values_to_schema(
                 vol.Schema(
                     {
+                        vol.Required(
+                            CONF_NAME,
+                            default=self.config_entry.title,
+                        ): vol.All(
+                            str, vol.Length(min=1, max=100)
+                        ),
                         vol.Optional(
                             CONF_CONNECTION_SPEED_MBPS,
                         ): selector.NumberSelector(
