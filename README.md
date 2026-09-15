@@ -1,145 +1,203 @@
 # qBittorrent Enhanced
 
-A custom Home Assistant integration for controlling and monitoring a local qBittorrent server through the qBittorrent Web API.
-
-> **Status:** custom integration for Home Assistant, distributed through GitHub and HACS.
+A custom Home Assistant integration for qBittorrent with an accompanying
+Lovelace card.
 
 ## Features
 
-- Home Assistant Config Flow setup.
-- qBittorrent Web API key authentication on supported qBittorrent versions.
-- Username/password authentication for legacy setups.
-- Centralized polling through a `DataUpdateCoordinator`.
-- Torrent monitoring with a normalized torrent data model.
-- Torrent control actions based on torrent hash.
-- Add torrents from Magnet links.
-- Start, stop, recheck and reannounce torrents.
-- Delete torrents and optionally delete their files.
-- Category and tag management.
-- Download/upload speed limits.
-- Global and alternative speed-limit controls.
-- Alternative-speed switch.
-- Configurable connection speed used to constrain the speed-limit controls.
-- Diagnostics with sensitive authentication data redacted.
+### Home Assistant integration
 
-## Requirements
+-   qBittorrent WebAPI v2 support
+-   API key authentication for supported qBittorrent versions
+-   Username/password authentication as a fallback
+-   Configurable polling interval
+-   Optional connection speed setting
+-   Global download/upload speed limit controls
+-   Alternative (Turtle) speed limit controls
+-   Torrent sensors and normalized torrent data
+-   Home Assistant actions for common torrent operations
+-   Support for qBittorrent 5.x
 
-- Home Assistant with support for custom integrations.
-- qBittorrent with Web API access enabled.
-- Network access from Home Assistant to the qBittorrent Web UI/API.
+### Lovelace card
 
-The integration does not communicate with qBittorrent from the Lovelace frontend. Home Assistant remains the API boundary.
+The project also includes a custom Lovelace card:
 
-## Installation with HACS
+`qbittorrent-enhanced-card.js`
 
-### Custom repository
+The card uses the Home Assistant qBittorrent Enhanced integration rather
+than connecting directly to the qBittorrent WebAPI.
 
-Until the repository is accepted into the HACS default store, add it as a custom repository:
+The card is intended to provide a convenient interface for viewing and
+managing torrents from a Home Assistant dashboard.
 
-1. Open **HACS**.
-2. Open **Integrations**.
-3. Open the three-dot menu.
-4. Select **Custom repositories**.
-5. Enter:
+## Installation
 
-   `https://github.com/YOUR_GITHUB_USERNAME/qbittorrent-enhanced`
+### Home Assistant integration
 
-6. Select **Integration** as the repository type.
-7. Add the repository and install **qBittorrent Enhanced**.
-8. Restart Home Assistant.
+#### HACS
 
-Replace `YOUR_GITHUB_USERNAME` with the GitHub account that owns this repository.
+1.  Open **HACS** in Home Assistant.
+2.  Open **Integrations**.
+3.  Add this repository as a custom repository if it is not already
+    available in HACS: `https://github.com/urtaevS/qbittorrent-enhanced`
+4.  Select **Integration** as the category.
+5.  Install **qBittorrent Enhanced**.
+6.  Restart Home Assistant.
+7.  Go to **Settings → Devices & services → Add integration**.
+8.  Search for **qBittorrent Enhanced** and configure your qBittorrent
+    server.
 
-## Manual installation
+#### Manual installation
 
-Copy the integration directory to:
+Copy the `custom_components/qbittorrent_enhanced` directory into:
 
-```text
+``` text
 /config/custom_components/qbittorrent_enhanced/
 ```
 
-Then restart Home Assistant.
+Restart Home Assistant and add the integration from **Settings → Devices
+& services**.
+
+---
+
+### Lovelace card
+
+#### HACS
+
+The card is distributed from the same repository.
+
+1.  Open **HACS → Frontend**.
+2.  Open the menu in the top-right corner.
+3.  Select **Custom repositories**.
+4.  Add: `https://github.com/urtaevS/qbittorrent-enhanced`
+5.  Select **Lovelace** as the repository category.
+6.  Install the qBittorrent Enhanced card.
+7.  Restart Home Assistant if requested.
+
+The card file is:
+
+``` text
+frontend/qbittorrent-enhanced-card.js
+```
+
+#### Manual installation
+
+Copy:
+
+``` text
+frontend/qbittorrent-enhanced-card.js
+```
+
+to:
+
+``` text
+/config/www/qbittorrent-enhanced/
+```
+
+Then add the JavaScript module as a Lovelace resource:
+
+``` yaml
+url: /local/qbittorrent-enhanced/qbittorrent-enhanced-card.js
+type: module
+```
+
+After adding the resource, the card can be added to a Lovelace
+dashboard.
 
 ## Configuration
 
-After installation:
+Configure the qBittorrent Enhanced integration through the Home
+Assistant UI.
 
-1. Go to **Settings → Devices & services**.
-2. Select **Add integration**.
-3. Search for **qBittorrent Enhanced**.
-4. Enter the qBittorrent connection details.
-5. Optionally enter the Internet connection speed in Mbps. This is used to set a sensible upper bound for the speed-limit controls.
+The initial setup supports:
 
-For example, a 300 Mbps connection corresponds to a theoretical maximum of 37.5 MB/s.
+-   qBittorrent host
+-   API key or username/password authentication
+-   SSL verification
+-   Update interval
+-   Optional internet connection speed
 
-## Speed limits
+The connection speed is used to determine the maximum values exposed by
+the global and alternative speed-limit number entities.
 
-The integration exposes speed limits in **MB/s**, while qBittorrent's API values remain in bytes per second internally.
+### Speed limits
 
-Default UI limits are:
+Speed-limit entities use **MB/s** in Home Assistant.
 
-- Global download/upload: up to 150 MB/s.
-- Alternative download/upload: up to 10 MB/s.
+Global limits:
 
-When a connection speed is configured, the global controls are additionally limited to the corresponding theoretical MB/s value.
+-   Default maximum without a configured connection speed: `150 MB/s`
+-   With a configured connection speed, the maximum is limited by the
+    connection speed
 
-The alternative limits are qBittorrent's lower-bandwidth profile. The alternative-speed switch controls whether that profile is active.
+Alternative limits:
+
+-   Default maximum: `10 MB/s`
+-   If the configured connection speed is below `80 Mbps`, the maximum
+    is limited accordingly
+
+`0 MB/s` means unlimited.
 
 ## Actions
 
-The integration provides Home Assistant actions under the `qbittorrent_enhanced` namespace, including:
+The integration provides Home Assistant actions for common torrent
+operations, including:
 
-- `add_magnet`
-- `get_torrents`
-- `start_torrent`
-- `stop_torrent`
-- `recheck_torrent`
-- `reannounce_torrent`
-- `delete_torrent`
-- `set_category`
-- `set_tags`
-- `remove_tags`
-- `set_download_limit`
-- `set_upload_limit`
-- `set_priority`
-- `set_force_start`
-- `set_location`
-- `rename_torrent`
+-   `qbittorrent_enhanced.add_magnet`
+-   `qbittorrent_enhanced.get_torrents`
+-   `qbittorrent_enhanced.start_torrent`
+-   `qbittorrent_enhanced.stop_torrent`
+-   `qbittorrent_enhanced.recheck_torrent`
+-   `qbittorrent_enhanced.reannounce_torrent`
+-   `qbittorrent_enhanced.delete_torrent`
+-   `qbittorrent_enhanced.set_category`
+-   `qbittorrent_enhanced.set_tags`
+-   `qbittorrent_enhanced.remove_tags`
+-   `qbittorrent_enhanced.set_download_limit`
+-   `qbittorrent_enhanced.set_upload_limit`
+-   `qbittorrent_enhanced.set_priority`
+-   `qbittorrent_enhanced.set_force_start`
+-   `qbittorrent_enhanced.set_location`
+-   `qbittorrent_enhanced.rename_torrent`
 
-The Home Assistant action editor obtains field definitions from `services.yaml`.
-
-## qBittorrent Web API
-
-The integration is designed around qBittorrent Web API v2 and includes compatibility handling for API versions where the newer speed-limit endpoints are not available.
-
-API-key authentication is preferred on qBittorrent versions that support it; username/password authentication remains available as a fallback.
+`add_magnet` accepts a magnet link directly. Redirect URLs are not
+resolved by the integration.
 
 ## Security
 
-- Authentication credentials are stored in the Home Assistant config entry.
-- Diagnostics redact authentication secrets.
-- The integration uses Home Assistant's configuration and service/action layer rather than exposing qBittorrent credentials to the frontend.
+The integration communicates with qBittorrent locally through its
+WebAPI.
+
+-   API keys and credentials are not intended to be logged.
+-   SSL certificate verification can be configured during setup.
+-   Use HTTPS when communicating with qBittorrent over an untrusted
+    network.
 
 ## Development
 
 The repository contains the Home Assistant integration under:
 
-```text
+``` text
 custom_components/qbittorrent_enhanced/
 ```
 
-Project tests are kept under `tests/`.
+The Lovelace card is under:
 
-GitHub Actions validate the repository with both HACS validation and Home Assistant Hassfest.
+``` text
+frontend/
+```
+
+The project also contains tests and GitHub validation workflows.
 
 ## Version
 
-Current release: **0.5.15**
+Current release: **0.5.18**
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Disclaimer
 
-This is a community-maintained custom Home Assistant integration. It is not part of Home Assistant Core and is not affiliated with or endorsed by the qBittorrent project.
+This is a custom Home Assistant integration and Lovelace card. It is not
+affiliated with or endorsed by the qBittorrent project.
