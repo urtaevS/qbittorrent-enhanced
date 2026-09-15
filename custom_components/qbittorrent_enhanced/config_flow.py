@@ -16,7 +16,6 @@ from .const import (
     CONF_API_KEY,
     CONF_AUTH_METHOD,
     CONF_CONNECTION_SPEED_MBPS,
-    CONF_NAME,
     CONF_UPDATE_INTERVAL,
     CONF_VERIFY_SSL,
     DEFAULT_UPDATE_INTERVAL,
@@ -170,13 +169,15 @@ class QBittorrentConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         await self.async_set_unique_id(host)
         self._abort_if_unique_id_configured()
+
+        title = f"qBittorrent {info.version}"
         connection_speed = self._data.pop(CONF_CONNECTION_SPEED_MBPS, None)
         options = {
             CONF_UPDATE_INTERVAL: self._data.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL),
         }
         if connection_speed is not None:
             options[CONF_CONNECTION_SPEED_MBPS] = connection_speed
-        return self.async_create_entry(title="qBittorrent", data=self._data, options=options)
+        return self.async_create_entry(title=title, data=self._data, options=options)
 
     @staticmethod
     @callback
