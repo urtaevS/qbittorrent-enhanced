@@ -1,4 +1,4 @@
-/* qBittorrent Enhanced Card v0.4.61 */
+/* qBittorrent Enhanced Card v0.4.62 */
 
 class QBittorrentEnhancedCard extends HTMLElement {
   static getConfigForm() {
@@ -373,7 +373,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       this._server = result.server || {};
       this._error = null;
     } catch (error) {
-      console.error("[qBittorrent Enhanced Card v0.4.61]", error);
+      console.error("[qBittorrent Enhanced Card v0.4.62]", error);
       this._error = error?.message || "Не удалось получить список торрентов";
     } finally {
       this._loading = false;
@@ -401,7 +401,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       await new Promise((resolve) => setTimeout(resolve, 350));
       await this._load();
     } catch (error) {
-      console.error("[qBittorrent Enhanced Card v0.4.61]", error);
+      console.error("[qBittorrent Enhanced Card v0.4.62]", error);
       this._error = error?.message || `Ошибка: ${service}`;
       this._render();
     }
@@ -738,7 +738,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
         }
       
     
-        /* v0.4.61 compact mode: single-line pill torrent rows */
+        /* v0.4.62 compact mode: single-line pill torrent rows */
         .card.compact .torrent {
       font-weight: 300;
           display:flex;
@@ -832,7 +832,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       padding-bottom: 0;
     }
     
-    /* v0.4.61 compact controls */
+    /* v0.4.62 compact controls */
     .card.compact .torrent {
       height: 24px !important;
       min-height: 24px !important;
@@ -907,7 +907,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       line-height: 32px !important;
     }
     
-    /* v0.4.61 compact empty torrent list */
+    /* v0.4.62 compact empty torrent list */
     .card.compact .torrent-list:has(.empty) {
       height: 24px !important;
       min-height: 24px !important;
@@ -926,7 +926,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       line-height: 24px !important;
     }
     
-    /* v0.4.61 compact empty state: center the message horizontally */
+    /* v0.4.62 compact empty state: center the message horizontally */
     .card.compact .torrent-list:has(.empty) {
       display: flex !important;
       justify-content: center !important;
@@ -938,7 +938,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       text-align: center !important;
     }
     
-    /* v0.4.61 compact spacing and equal control heights */
+    /* v0.4.62 compact spacing and equal control heights */
     .card.compact .torrent-list {
       margin-bottom: 8px !important;
     }
@@ -967,7 +967,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       box-sizing: border-box !important;
     }
     
-/* v0.4.61 compact control spacing */
+/* v0.4.62 compact control spacing */
 .card.compact .controls {
   height: 20px !important;
   min-height: 20px !important;
@@ -984,7 +984,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
   margin-bottom: 10px !important;
 }
 
-    /* v0.4.61 compact controls: 16px */
+    /* v0.4.62 compact controls: 16px */
     .card.compact .controls {
       height: 16px !important;
       min-height: 16px !important;
@@ -1005,14 +1005,14 @@ class QBittorrentEnhancedCard extends HTMLElement {
       line-height: 16px !important;
     }
     
-    /* v0.4.61 compact global actions */
-    .card.compact .global-actions {
+    /* v0.4.62 global actions: same sizing in normal and compact modes */
+    .global-actions {
       padding: 1px !important;
       box-sizing: border-box !important;
       margin-top: 8px !important;
     }
 
-    .card.compact .global-actions button {
+    .global-actions button {
       height: 28px !important;
       min-height: 28px !important;
       max-height: 28px !important;
@@ -1021,7 +1021,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       box-sizing: border-box !important;
     }
     
-/* v0.4.61 align all compact global action icons */
+/* v0.4.62 align all compact global action icons */
 .card.compact .global-actions button > svg {
   width: 18px !important;
   height: 18px !important;
@@ -1029,7 +1029,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
   flex: 0 0 18px !important;
 }
 
-    /* v0.4.61 desktop popup: keep popup inside the card, avoid clipping */
+    /* v0.4.62 desktop popup: keep popup inside the card, avoid clipping */
     .overlay {
       position: fixed !important;
       inset: 0 !important;
