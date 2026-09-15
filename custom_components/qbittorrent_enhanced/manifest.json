@@ -2,11 +2,10 @@
   "domain": "qbittorrent_enhanced",
   "name": "qBittorrent Enhanced",
   "version": "0.5.18",
-  "documentation": "https://github.com/YOUR_GITHUB_USERNAME/qbittorrent-enhanced",
-  "issue_tracker": "https://github.com/YOUR_GITHUB_USERNAME/qbittorrent-enhanced/issues",
-  "requirements": [],
+  "documentation": "https://github.com/urtaevS/qbittorrent-enhanced",
+  "issue_tracker": "https://github.com/urtaevS/qbittorrent-enhanced/issues",
   "codeowners": [
-    "@YOUR_GITHUB_USERNAME"
+      "@urtaevS"
   ],
   "config_flow": true,
   "iot_class": "local_polling",
