@@ -1,3 +1,9 @@
+## 0.5.19
+
+- Fixed Config Flow handler discovery by using the Home Assistant-standard `ConfigFlow` class name.
+- Removed stale connection-name fields from translation metadata.
+
+
 ## 0.5.18
 
 - Config Entry title now follows the Home Assistant device name.
