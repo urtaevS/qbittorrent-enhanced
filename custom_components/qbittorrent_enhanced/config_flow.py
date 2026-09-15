@@ -28,7 +28,7 @@ from .const import (
 from .exceptions import QBittorrentError
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class QBittorrentConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self) -> None:
