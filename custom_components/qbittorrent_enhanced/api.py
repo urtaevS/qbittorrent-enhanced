@@ -6,10 +6,14 @@ from urllib.parse import parse_qs, urlparse
 import base64
 import json
 import re
+import logging
 
 import aiohttp
 
 from .const import API_BASE
+_LOGGER = logging.getLogger(__name__)
+
+
 from .exceptions import (
     QBittorrentApiError,
     QBittorrentAuthError,
@@ -251,23 +255,45 @@ class QBittorrentApi:
         try:
             async with self._session.post(
                 self._url("/auth/login"),
-                headers={"Referer": f"{self._base_url}/"},
+                headers={
+                    "Referer": f"{self._base_url}/",
+                    "Origin": self._base_url,
+                },
                 data={
                     "username": self._username,
                     "password": self._password,
                 },
                 ssl=self._verify_ssl,
             ) as response:
+                body = await response.text()
+
+                _LOGGER.error(
+                    "qBittorrent login diagnostic: HTTP %s, response=%r",
+                    response.status,
+                    body[:300],
+                )
+
                 if response.status == 401:
                     raise QBittorrentAuthError("Invalid qBittorrent credentials")
+
                 if response.status >= 400:
-                    body = await response.text()
                     raise QBittorrentApiError(
                         f"Login failed with HTTP {response.status}: {body[:300]}"
                     )
-                if (await response.text()).strip().lower() != "ok.":
-                    raise QBittorrentAuthError("qBittorrent login was rejected")
+
+                # qBittorrent may return HTTP 204 with an empty response
+                # on successful authentication.
+                if response.status == 204:
+                    self._logged_in = True
+                    return
+
+                if body.strip().lower() != "ok.":
+                    raise QBittorrentAuthError(
+                        "qBittorrent login was rejected"
+                    )
+
                 self._logged_in = True
+
         except (QBittorrentAuthError, QBittorrentApiError):
             raise
         except (aiohttp.ClientError, TimeoutError) as err:
