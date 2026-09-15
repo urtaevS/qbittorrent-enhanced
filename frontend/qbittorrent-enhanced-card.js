@@ -1,4 +1,4 @@
-/* qBittorrent Enhanced Card v0.4.59 */
+/* qBittorrent Enhanced Card v0.4.61 */
 
 class QBittorrentEnhancedCard extends HTMLElement {
   static getConfigForm() {
@@ -373,7 +373,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       this._server = result.server || {};
       this._error = null;
     } catch (error) {
-      console.error("[qBittorrent Enhanced Card v0.4.59]", error);
+      console.error("[qBittorrent Enhanced Card v0.4.61]", error);
       this._error = error?.message || "Не удалось получить список торрентов";
     } finally {
       this._loading = false;
@@ -401,7 +401,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       await new Promise((resolve) => setTimeout(resolve, 350));
       await this._load();
     } catch (error) {
-      console.error("[qBittorrent Enhanced Card v0.4.59]", error);
+      console.error("[qBittorrent Enhanced Card v0.4.61]", error);
       this._error = error?.message || `Ошибка: ${service}`;
       this._render();
     }
@@ -738,7 +738,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
         }
       
     
-        /* v0.4.59 compact mode: single-line pill torrent rows */
+        /* v0.4.61 compact mode: single-line pill torrent rows */
         .card.compact .torrent {
       font-weight: 300;
           display:flex;
@@ -832,7 +832,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       padding-bottom: 0;
     }
     
-    /* v0.4.59 compact controls */
+    /* v0.4.61 compact controls */
     .card.compact .torrent {
       height: 24px !important;
       min-height: 24px !important;
@@ -907,7 +907,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       line-height: 32px !important;
     }
     
-    /* v0.4.59 compact empty torrent list */
+    /* v0.4.61 compact empty torrent list */
     .card.compact .torrent-list:has(.empty) {
       height: 24px !important;
       min-height: 24px !important;
@@ -926,7 +926,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       line-height: 24px !important;
     }
     
-    /* v0.4.59 compact empty state: center the message horizontally */
+    /* v0.4.61 compact empty state: center the message horizontally */
     .card.compact .torrent-list:has(.empty) {
       display: flex !important;
       justify-content: center !important;
@@ -938,7 +938,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       text-align: center !important;
     }
     
-    /* v0.4.59 compact spacing and equal control heights */
+    /* v0.4.61 compact spacing and equal control heights */
     .card.compact .torrent-list {
       margin-bottom: 8px !important;
     }
@@ -967,7 +967,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       box-sizing: border-box !important;
     }
     
-/* v0.4.59 compact control spacing */
+/* v0.4.61 compact control spacing */
 .card.compact .controls {
   height: 20px !important;
   min-height: 20px !important;
@@ -984,7 +984,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
   margin-bottom: 10px !important;
 }
 
-    /* v0.4.59 compact controls: 16px */
+    /* v0.4.61 compact controls: 16px */
     .card.compact .controls {
       height: 16px !important;
       min-height: 16px !important;
@@ -1005,7 +1005,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       line-height: 16px !important;
     }
     
-    /* v0.4.59 compact global actions */
+    /* v0.4.61 compact global actions */
     .card.compact .global-actions {
       padding: 1px !important;
       box-sizing: border-box !important;
@@ -1021,33 +1021,19 @@ class QBittorrentEnhancedCard extends HTMLElement {
       box-sizing: border-box !important;
     }
     
-/* v0.4.59 align all compact global action icons */
+/* v0.4.61 align all compact global action icons */
 .card.compact .global-actions button > svg {
   width: 18px !important;
   height: 18px !important;
   display: block !important;
   flex: 0 0 18px !important;
 }
-    /* v0.4.59: hide duplicate marquee copy for names that fit */
-    .card.compact .torrent .name:not(.is-overflowing) .name-copy[aria-hidden="true"],
-    .card.compact .torrent .name:not(.is-overflowing) .name-gap {
-      display: none !important;
-    }
-    
-    /* v0.4.59 global actions sizing */
-    .global-actions {
-      padding: 1px !important;
-      box-sizing: border-box !important;
-      margin-top: 8px !important;
-    }
 
-    .global-actions button {
-      height: 28px !important;
-      min-height: 28px !important;
-      max-height: 28px !important;
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-      box-sizing: border-box !important;
+    /* v0.4.61 desktop popup: keep popup inside the card, avoid clipping */
+    .overlay {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 2147483647 !important;
     }
     </style>
 
@@ -1293,7 +1279,6 @@ class QBittorrentEnhancedCard extends HTMLElement {
 
         const overflow = Math.max(0, firstCopy.scrollWidth - name.clientWidth);
         if (overflow <= 6) {
-          name.classList.remove("marquee", "is-overflowing");
           track.style.animation = "none";
           track.style.transform = "translate3d(0,0,0)";
           return;
@@ -1302,7 +1287,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
         // The animation moves exactly one copy + one gap. The second copy
         // is already in place, so when the animation loops there is no jump.
         const loopDistance = firstCopy.scrollWidth + gap.getBoundingClientRect().width;
-        name.classList.add("marquee", "is-overflowing");
+        name.classList.add("marquee");
         name.style.setProperty("--qb-marquee-distance", `${-loopDistance}px`);
 
         // Constant, calm speed. Long names naturally take longer to loop.
@@ -1443,10 +1428,7 @@ class QBittorrentEnhancedCard extends HTMLElement {
       </div>
     `;
 
-    // Mount the popup on document.body so desktop browsers are not affected
-    // by the card's stacking/overflow context. Keep the card as the owner
-    // through _detailsHash and existing handlers.
-    document.body.appendChild(overlay);
+    this.appendChild(overlay);
 
     overlay.querySelector(".close").onclick = () => {
       this._detailsHash = null;
