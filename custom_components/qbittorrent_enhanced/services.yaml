@@ -1,0 +1,298 @@
+add_magnet:
+  name: Add magnet
+  description: Add one torrent from a magnet link.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    magnet_url:
+      required: true
+      selector: {text: {multiline: true}}
+    save_path:
+      required: false
+      selector: {text: {}}
+    category:
+      required: false
+      selector: {text: {}}
+    tags:
+      required: false
+      selector: {text: {multiple: true}}
+    skip_checking:
+      required: false
+      default: false
+      selector: {boolean: {}}
+    paused:
+      required: false
+      default: false
+      selector: {boolean: {}}
+    content_layout:
+      required: false
+      selector:
+        select:
+          options:
+            - Original
+            - Subfolder
+            - NoSubfolder
+    rename:
+      required: false
+      selector: {text: {}}
+    upload_limit:
+      required: false
+      description: Upload speed limit in MB/s. 0 means unlimited.
+      selector: {number: {min: 0, max: 1000, step: 1, mode: slider}}
+    download_limit:
+      required: false
+      description: Download speed limit in MB/s. 0 means unlimited.
+      selector: {number: {min: 0, max: 1000, step: 1, mode: slider}}
+    ratio_limit:
+      required: false
+      description: Seeding ratio limit. -1 means no limit.
+      selector: {number: {min: -1, max: 1000, step: 1, mode: slider}}
+    seeding_time_limit:
+      required: false
+      description: Maximum seeding time in minutes. -1 means no limit.
+      selector: {number: {min: -1, max: 100000, step: 1, mode: slider}}
+    auto_tmm:
+      required: false
+      selector: {boolean: {}}
+
+get_torrents:
+  name: Get torrents
+  description: Return the normalized torrent collection owned by the integration coordinator.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+
+start_torrent:
+  name: Resume torrent
+  description: Resume one or more torrents by hash.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+
+stop_torrent:
+  name: Pause torrent
+  description: Pause one or more torrents by hash.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+
+recheck_torrent:
+  name: Recheck torrent
+  description: Recheck one or more torrents by hash.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+
+reannounce_torrent:
+  name: Reannounce torrent
+  description: Reannounce one or more torrents by hash.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+
+delete_torrent:
+  name: Delete torrent
+  description: Delete one or more torrents, optionally including files.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    delete_files:
+      required: true
+      default: false
+      selector: {boolean: {}}
+
+set_category:
+  name: Set torrent category
+  description: Assign a category to one or more torrents.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    category:
+      required: true
+      selector: {text: {}}
+
+set_tags:
+  name: Set torrent tags
+  description: Add tags to one or more torrents.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    tags:
+      required: true
+      selector: {text: {}}
+
+remove_tags:
+  name: Remove torrent tags
+  description: Remove tags from one or more torrents.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    tags:
+      required: true
+      selector: {text: {}}
+
+set_download_limit:
+  name: Set torrent download limit
+  description: Set per-torrent download limit in MB/s. 0 means unlimited.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    limit:
+      required: true
+      description: Download speed limit in MB/s. 0 means unlimited.
+      selector: {number: {min: 0, max: 1000, step: 1, mode: slider}}
+
+set_upload_limit:
+  name: Set torrent upload limit
+  description: Set per-torrent upload limit in MB/s. 0 means unlimited.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    limit:
+      required: true
+      description: Upload speed limit in MB/s. 0 means unlimited.
+      selector: {number: {min: 0, max: 1000, step: 1, mode: slider}}
+
+set_priority:
+  name: Set torrent priority
+  description: Change priority of one or more torrents.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    priority:
+      required: true
+      description: Torrent priority operation.
+      selector:
+        select:
+          options:
+            - increase
+            - decrease
+            - top
+            - bottom
+
+set_force_start:
+  name: Set force start
+  description: Enable or disable force start for one or more torrents.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    value:
+      required: true
+      selector: {boolean: {}}
+
+set_location:
+  name: Set torrent location
+  description: Move one or more torrents to a location.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: false
+      selector: {text: {}}
+    hashes:
+      required: false
+      selector: {text: {}}
+    location:
+      required: true
+      selector: {text: {}}
+
+rename_torrent:
+  name: Rename torrent
+  description: Rename a torrent by hash.
+  fields:
+    entry_id:
+      required: true
+      selector: {config_entry: {integration: qbittorrent_enhanced}}
+    hash:
+      required: true
+      selector: {text: {}}
+    name:
+      required: true
+      selector: {text: {}}

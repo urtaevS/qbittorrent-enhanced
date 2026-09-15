@@ -1,0 +1,53 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "qBittorrent",
+        "description": "Connect to qBittorrent WebUI/WebAPI.",
+        "data": {
+          "name": "Connection name",
+          "host": "URL",
+          "auth_method": "Authentication",
+          "verify_ssl": "Verify TLS certificate",
+          "update_interval": "Update interval (seconds)"
+        }
+      },
+      "api_key": {
+        "title": "API key",
+        "data": {
+          "api_key": "API key"
+        }
+      },
+      "credentials": {
+        "title": "Username and password",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "speed": {
+        "title": "Connection speed",
+        "description": "Optional. Used to calculate the maximum values of Global and Alternative speed entities. Enter your internet connection speed in Mbps.",
+        "data": {
+          "connection_speed_mbps": "Connection speed (Mbps)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to or authenticate with qBittorrent."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "qBittorrent settings",
+        "description": "Change the connection name and optional speed settings.",
+        "data": {
+          "name": "Connection name",
+          "connection_speed_mbps": "Connection speed (Mbps)",
+          "update_interval": "Update interval (seconds)"
+        }
+      }
+    }
+  }
+}
