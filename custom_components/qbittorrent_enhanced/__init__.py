@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+import aiohttp
 from dataclasses import asdict
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, HomeAssistantError, ServiceCall, SupportsResponse
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import QBittorrentApi
 from .exceptions import QBittorrentDuplicateError
@@ -219,7 +219,9 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    session = async_get_clientsession(hass)
+    session = aiohttp.ClientSession(
+        cookie_jar=aiohttp.CookieJar(unsafe=True)
+    )
     if entry.data[CONF_AUTH_METHOD] == AUTH_API_KEY:
         kwargs = {"api_key": entry.data[CONF_API_KEY]}
     else:
@@ -231,6 +233,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     api = QBittorrentApi(
         session, entry.data["host"], entry.data[CONF_VERIFY_SSL], **kwargs
     )
+    api._session_owner = session  # noqa: SLF001
     coordinator = QBittorrentCoordinator(hass, entry, api)
     await coordinator.async_setup()
     await coordinator.async_config_entry_first_refresh()
@@ -240,4 +243,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok and entry.runtime_data:
+        api = entry.runtime_data.api
+        session = getattr(api, "_session_owner", None)
+        if session is not None:
+            await session.close()
+    return unload_ok

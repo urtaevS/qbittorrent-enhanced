@@ -6,14 +6,10 @@ from urllib.parse import parse_qs, urlparse
 import base64
 import json
 import re
-import logging
 
 import aiohttp
 
 from .const import API_BASE
-_LOGGER = logging.getLogger(__name__)
-
-
 from .exceptions import (
     QBittorrentApiError,
     QBittorrentAuthError,
@@ -150,7 +146,6 @@ class QBittorrentApi:
         self._api_key = api_key
         self._username = username
         self._password = password
-        self._sid: str | None = None
         self._logged_in = False
         self.info: QBittorrentInfo | None = None
 
@@ -180,11 +175,7 @@ class QBittorrentApi:
     def _headers(self) -> dict[str, str]:
         if self._api_key:
             return {"Authorization": f"Bearer {self._api_key}"}
-
-        headers = {"Referer": f"{self._base_url}/"}
-        if self._sid:
-            headers["Cookie"] = f"SID={self._sid}"
-        return headers
+        return {"Referer": f"{self._base_url}/"}
 
     async def _request(
         self,
@@ -272,12 +263,6 @@ class QBittorrentApi:
             ) as response:
                 body = await response.text()
 
-                _LOGGER.error(
-                    "qBittorrent login diagnostic: HTTP %s, response=%r",
-                    response.status,
-                    body[:300],
-                )
-
                 if response.status == 401:
                     raise QBittorrentAuthError("Invalid qBittorrent credentials")
 
@@ -286,30 +271,12 @@ class QBittorrentApi:
                         f"Login failed with HTTP {response.status}: {body[:300]}"
                     )
 
-                # qBittorrent may return HTTP 204 with an empty response
-                # on successful authentication. The SID cookie is required
-                # for subsequent API requests.
-                sid = response.cookies.get("SID")
-                if sid is not None:
-                    self._sid = sid.value
-
                 if response.status == 204:
-                    if not self._sid:
-                        raise QBittorrentAuthError(
-                            "qBittorrent login succeeded but no SID cookie was returned"
-                        )
                     self._logged_in = True
                     return
 
                 if body.strip().lower() != "ok.":
-                    raise QBittorrentAuthError(
-                        "qBittorrent login was rejected"
-                    )
-
-                if not self._sid:
-                    raise QBittorrentAuthError(
-                        "qBittorrent login succeeded but no SID cookie was returned"
-                    )
+                    raise QBittorrentAuthError("qBittorrent login was rejected")
 
                 self._logged_in = True
 

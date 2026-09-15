@@ -29,6 +29,7 @@ class SpeedLimitNumber(CoordinatorEntity, NumberEntity):
 
     def __init__(self, coordinator, entry, key):
         super().__init__(coordinator)
+        self.config_entry = entry
         self.key = key
         self._attr_name = {
             "dl_limit": "Global download limit",

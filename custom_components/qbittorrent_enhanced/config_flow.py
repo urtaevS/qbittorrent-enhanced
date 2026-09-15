@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import Any
 
+import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.helpers import selector
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import QBittorrentApi
 from .const import (
@@ -133,7 +133,9 @@ class QBittorrentConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _async_validate_and_create(self):
         host = self._data[CONF_HOST].rstrip("/")
-        session = async_get_clientsession(self.hass)
+        session = aiohttp.ClientSession(
+            cookie_jar=aiohttp.CookieJar(unsafe=True)
+        )
 
         kwargs = {}
         if self._data[CONF_AUTH_METHOD] == AUTH_API_KEY:
@@ -152,6 +154,7 @@ class QBittorrentConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             info = await api.discover()
         except QBittorrentError:
+            await session.close()
             return self.async_show_form(
                 step_id=(
                     "api_key"
@@ -170,6 +173,8 @@ class QBittorrentConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ),
                 errors={"base": "cannot_connect"},
             )
+
+        await session.close()
 
         await self.async_set_unique_id(host)
         self._abort_if_unique_id_configured()
