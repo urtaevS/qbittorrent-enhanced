@@ -1,14 +1,14 @@
 {
   "domain": "qbittorrent_enhanced",
   "name": "qBittorrent Enhanced",
-  "version": "0.5.16",
-  "documentation": "https://github.com/urraevs/qbittorrent-enhanced",
-  "issue_tracker": "https://github.com/urtaevs/qbittorrent-enhanced/issues",
-  "requirements": [],
   "codeowners": [
-    "@urtaevs"
+    "@urtaevS"
   ],
   "config_flow": true,
+  "documentation": "https://github.com/urtaevS/qbittorrent-enhanced",
+  "integration_type": "hub",
   "iot_class": "local_polling",
-  "integration_type": "hub"
+  "issue_tracker": "https://github.com/urtaevS/qbittorrent-enhanced/issues",
+  "requirements": [],
+  "version": "0.5.18"
 }
